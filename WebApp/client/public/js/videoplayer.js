@@ -14,9 +14,9 @@ export class VideoPlayer {
 
   /**
  * @param {Element} playerElement parent element for create video player
- * @param {HTMLInputElement} lockMouseCheck use checked propety for lock mouse 
+ * @param {HTMLInputElement} lockMouseCheck use checked propety for lock mouse
  */
-  createPlayer(playerElement, lockMouseCheck) {
+  createPlayer(playerElement, lockMouseCheck, useFullscreen = true, useAutoplay = false) {
     this.playerElement = playerElement;
     this.lockMouseCheck = lockMouseCheck;
 
@@ -24,20 +24,28 @@ export class VideoPlayer {
     this.videoElement.id = 'Video';
     this.videoElement.style.touchAction = 'none';
     this.videoElement.playsInline = true;
+    if(useAutoplay){
+      this.videoElement.autoplay = true;
+      this.videoElement.muted = true;
+    }
+
     this.videoElement.srcObject = new MediaStream();
     this.videoElement.addEventListener('loadedmetadata', this._onLoadedVideo.bind(this), true);
     this.playerElement.appendChild(this.videoElement);
 
     // add fullscreen button
-    this.fullScreenButtonElement = document.createElement('img');
-    this.fullScreenButtonElement.id = 'fullscreenButton';
-    this.fullScreenButtonElement.src = '../images/FullScreen.png';
-    this.fullScreenButtonElement.addEventListener("click", this._onClickFullscreenButton.bind(this));
-    this.playerElement.appendChild(this.fullScreenButtonElement);
+    if (useFullscreen) {
+      this.fullScreenButtonElement = document.createElement('img');
+      this.fullScreenButtonElement.id = 'fullscreenButton';
+      this.fullScreenButtonElement.src = '../images/FullScreen.png';
+      this.fullScreenButtonElement.addEventListener("click", this._onClickFullscreenButton.bind(this));
+      this.playerElement.appendChild(this.fullScreenButtonElement);
 
-    document.addEventListener('webkitfullscreenchange', this._onFullscreenChange.bind(this));
-    document.addEventListener('fullscreenchange', this._onFullscreenChange.bind(this));
-    this.videoElement.addEventListener("click", this._mouseClick.bind(this), false);
+      document.addEventListener('webkitfullscreenchange', this._onFullscreenChange.bind(this));
+      document.addEventListener('fullscreenchange', this._onFullscreenChange.bind(this));
+      this.videoElement.addEventListener("click", this._mouseClick.bind(this), false);
+    }
+
   }
 
   _onLoadedVideo() {
@@ -119,7 +127,7 @@ export class VideoPlayer {
   }
 
   /**
-   * @param {MediaStreamTrack} track 
+   * @param {MediaStreamTrack} track
    */
   addTrack(track) {
     if (!this.videoElement.srcObject) {
@@ -189,7 +197,7 @@ export class VideoPlayer {
 
   /**
    * setup datachannel for player input (muouse/keyboard/touch/gamepad)
-   * @param {RTCDataChannel} channel 
+   * @param {RTCDataChannel} channel
    */
   setupInput(channel) {
     this.sender = new Sender(this.videoElement);
