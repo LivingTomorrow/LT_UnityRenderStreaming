@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  lt_unity-renderstreaming-webapp:
+    image: ${DOCKER_REGISTRY-}lt_unity-renderstreaming-webapp:${LT_IMAGE_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${HTTP_PORT}:80"
