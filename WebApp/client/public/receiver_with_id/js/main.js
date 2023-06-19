@@ -85,7 +85,7 @@ async function onDisconnect() {
   videoPlayer.deletePlayer();
   await renderstreaming.stop();
   renderstreaming = null;
-  if (supportsSetCodecPreferences) {
+  if (supportsSetCodecPreferences && codecPreferences) {
     codecPreferences.disabled = false;
   }
   attemptReconnect();
